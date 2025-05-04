@@ -1,0 +1,65 @@
+Development notes
+
+I've used a `<zjs-include remote-src=...>` component for the last two years.
+It replaces itself with the content at remote-src verbatim.  Scripts within
+that page are executed, style tags are respected, etc.
+
+It has proved very useful for client-side includes. This is a brainstorm for a
+similar mechanism to do isolated components in a webpage. There are a plethora
+of problems with trying to use zjs-include for reusable components, some of
+which are:
+1. No scoping - elements in the HTML fragment cannot have id attributes
+   specified, because the id might conflict with another element included by a
+   different zjs-include tag.
+2. Code executed in that snippet's script tags is not scoped either -
+   declaring a variable and loading that fragment twice (for example, by
+   navigating away to another fragment, then navigating back, while staying on
+   the same actual page) causes errors because the variable is  already
+   declared.
+3. No scoping of DOM elements - I cannot write a function to perform a
+   querySelector only on that snippet.
+4. No way to pass parameters to the fragment that is loaded, which is
+   necessary sometimes.
+5. No way for a fragment to receive parameters.
+
+Some of these have crude and unscalable workarounds:
+1. For #4 and #5 I have used URL parameters, but these are clunky and
+   require the script tag to decode the URL parameters each time it is run.
+   Sometimes I store values in a globalVar variable that the fragment will
+   check. This is also unworkable.
+2. For #2, I ensure that everything in a script tag in the fragment is
+   wrapped in an anonymous function (I believe it's called a closure - confirm
+   if I am correct or not) that runs immediately (() => { ... }) ();. This is
+   also not good for many reasons, which include having to do window.clickfunc
+   = clickfunc for functions that are mentioned in an onclick attribute on a
+   button or similar.
+3. For #1 and #3 I sometimes use attribute name= and use a known  element
+   on the page with el.closest("name=...") to retrieve a fragment-level
+   element.
+
+The goal is a zjs-component element that works very similar to zjs-include:
+
+1. The element won't replace itself with the remote fragment, it will add
+   it as children elements. This solves the DOM scoping problems, because the
+   code in the fragment can do el.closest("zjs-component").
+2. By using an attribute for display, the element can be either inline,
+   block, block-inline, etc, which allows usage of the component as a block
+   display, or inline display, etc.
+3. When scripts are executed on the fragment, they will be executed in a
+   closure that is stored. This allows the fragment to have "methods" like a
+   normal object, so that onCreate() defined in the fragment will result in an
+   .onCreate() method in the closure.
+4. Executing scripts in this way also allows automatic calling of functions
+   named (for example) fragmentConstructor() and fragmentDestructor() to serve
+   as a constructor function (when the page is loaded) and a destructor
+   function (when the element is removed from the DOM).
+5. Passing of parameters to the fragment's constructor can be done using
+   attributes. For example, any zjs-component attribute that is not display
+   can be used to set values in the closure.
+6. I am also considering a pub/sub mechanism to allow logic in fragments to
+   execute when some other component generates a message. A simply pub/sub
+   implemented using customEvent is probably sufficient to do this.
+
+The long and short is: a fragment of HTML that can serve as an instance of an
+object, recognising `this` in code snippets.
+
