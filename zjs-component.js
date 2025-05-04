@@ -1,3 +1,8 @@
+/* ***************************************************************************
+ * Copyright Lelanthran Manickum, 2025 (GPL v3.0). Contact me for an alternate
+ * licence should the GPL v3.0 be inadequate for your purposes.
+ */
+
 class ZjsComponent extends HTMLElement {
 
    static _instanceCount = 0;

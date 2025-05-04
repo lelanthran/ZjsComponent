@@ -28,11 +28,11 @@ Some of these have crude and unscalable workarounds:
    Sometimes I store values in a globalVar variable that the fragment will
    check. This is also unworkable.
 2. For #2, I ensure that everything in a script tag in the fragment is
-   wrapped in an anonymous function (I believe it's called a closure - confirm
-   if I am correct or not) that runs immediately (() => { ... }) ();. This is
-   also not good for many reasons, which include having to do window.clickfunc
-   = clickfunc for functions that are mentioned in an onclick attribute on a
-   button or similar.
+   wrapped in an anonymous function that runs immediately:
+      `(() => { ... }) ();`
+   This is also not good for many reasons, which include having to do
+   window.clickfunc = clickfunc for functions that are mentioned in an onclick
+   attribute on a button or similar.
 3. For #1 and #3 I sometimes use attribute name= and use a known  element
    on the page with el.closest("name=...") to retrieve a fragment-level
    element.
@@ -57,7 +57,7 @@ The goal is a zjs-component element that works very similar to zjs-include:
    attributes. For example, any zjs-component attribute that is not display
    can be used to set values in the closure.
 6. I am also considering a pub/sub mechanism to allow logic in fragments to
-   execute when some other component generates a message. A simply pub/sub
+   execute when some other component generates a message. A simple pub/sub
    implemented using customEvent is probably sufficient to do this.
 
 The long and short is: a fragment of HTML that can serve as an instance of an
