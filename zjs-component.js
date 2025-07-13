@@ -25,7 +25,7 @@ class ZjsComponent extends HTMLElement {
 
    disconnectedCallback() {
       if (typeof this["onDisconnected"] === "function") {
-         this["onDisconnected"]();
+         this["onDisconnected"](this);
       }
       ZjsComponent._instances.delete(this.instanceCount);
    }
@@ -63,7 +63,7 @@ class ZjsComponent extends HTMLElement {
          this[key] = myClosure[key];
       }
       if (typeof this["onConnected"] === "function") {
-         this["onConnected"]();
+         this["onConnected"](this);
       }
    }
 

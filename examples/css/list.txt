@@ -1,0 +1,8 @@
+
+   no theme    = css/default.css
+
+   red theme   = css/colors-1.css
+
+   green theme = css/colors-2.css                   
+
+   blue theme  = css/colors-3.css
