@@ -1,0 +1,30 @@
+<!-- vim: set ts=3 sw=3 tw=120 -->
+
+<!--
+   Demonstrate how to create ones own custom element tagnames. The remote src
+   'components/newtag.zjs' expect to use the global variable `newTag` to
+   dispatch a message from an onclick handler.
+-->
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Tagname Test</title>
+
+      <link href="css/default.css" rel="stylesheet">
+
+      <script src="../zjs-component.js"></script>
+      <script>
+         const newTag = ZjsComponent.register("new-tag", "components/newtag.zjsc");
+      </script>
+   </head>
+   <body>
+      <h1>Hello, world!</h1>
+      <new-tag id=my-id theme-list=css/list.txt>
+      </new-tag>
+      <new-tag theme-list=css/list.txt>
+      </new-tag>
+   </body>
+</html>
+

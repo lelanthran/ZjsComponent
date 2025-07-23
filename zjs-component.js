@@ -1,3 +1,4 @@
+// vim: set ts=4 sw=4 tw=78 et
 /* ***************************************************************************
  * Copyright Lelanthran Manickum, 2025 (GPL v3.0). Contact me for an alternate
  * licence should the GPL v3.0 be inadequate for your purposes.
@@ -7,13 +8,12 @@ class ZjsComponent extends HTMLElement {
 
    static _instanceCount = 0;
    static _instances = new Map();
+   static _tagName = "zjs-component";
 
-   static send(objOrId, method, ...args) {
-      const instance = (objOrId instanceof Number)
-         ? ZjsComponent._instances.get(objOrId)
-         : (objOrId instanceof String)
-            ? document.querySelector(objOrId)
-            : objOrId.closest("zjs-component");
+   static send(objOrSelector, method, ...args) {
+      const instance = (typeof objOrSelector === "string")
+         ? document.querySelector(objOrSelector).closest(this._tagName)
+         : objOrSelector.closest(this._tagName);
       return instance[method](...args);
    }
 
@@ -31,7 +31,7 @@ class ZjsComponent extends HTMLElement {
    }
 
    async connectedCallback() {
-      const remoteSrc = this.getAttribute("remote-src");
+      const remoteSrc = this.constructor._remoteSrc || this.getAttribute("remote-src");
       if (!remoteSrc) return;
 
       if (this.hasAttribute("display")) {
@@ -95,6 +95,27 @@ class ZjsComponent extends HTMLElement {
       }
    }
 
+   static register(tagName, remoteSrc) {
+      if (customElements.get(tagName)) return null;
+
+      const newClass = class extends ZjsComponent {
+         static _remoteSrc = remoteSrc;
+         static _tagName = tagName;
+
+         static send(objOrSelector, method, ...args) {
+            const instance = (typeof objOrSelector === "string")
+               ? document.querySelector(objOrSelector).closest(this._tagName)
+               : objOrSelector.closest(this._tagName);
+            return instance[method](...args);
+         }
+         constructor() {
+            super();
+         }
+      };
+
+      customElements.define(tagName, newClass);
+      return newClass;
+   }
 }
 
-customElements.define("zjs-component", ZjsComponent);
+customElements.define(ZjsComponent._tagName, ZjsComponent);

@@ -1,0 +1,58 @@
+<!-- vim: set ts=3 sw=3 tw=120 -->
+
+<select name="theme-choices" onchange="newTag.send(this, 'handleColorChange', this.value)">
+</select>
+
+<script>
+   let elHead = null;
+   let elSelect = null;
+
+   function makeOption(elParent, name, value) {
+      const option = document.createElement("option");
+      option.text = name;
+      option.value = value;
+      elParent.appendChild (option);
+   }
+
+   function onConnected(obj) {
+      fetch(obj.getAttribute("theme-list"))
+         .then((response) => response.text())
+         .then((text) => {
+            // Racing; a big deal if the fetch completes before this component
+            // is initialised, small chance of that happening though.
+            const elSelect = obj.querySelector("select");
+            elSelect.innerHTML = "";
+            text.split("\n").forEach((line) => {
+               const [name, value] = line.split("=").map(s => s.trim());
+               if (name != undefined && value != undefined &&
+                   name.length > 0 && value.length > 0) {
+                  makeOption(elSelect, name, value);
+               }
+            });
+         })
+         .catch(error => console.error("Error fetching list.txt:", error));
+   }
+
+   function handleColorChange(newTheme) {
+      console.log (this.instanceCount);
+      let elStyle = document.querySelector("[name=colortheme-style]");
+      if (elStyle == null) {
+         elStyle = document.createElement("style");
+         elStyle.setAttribute("name", "colortheme-style");
+         document.querySelector("head").appendChild(elStyle);
+      }
+      elStyle.innerHTML = "";
+      fetch (newTheme)
+         .then((response) => response.text ())
+         .then((text) => {
+            elStyle.innerText = text;
+         })
+         .catch((error) => {
+            console.error (`Failed to fetch ${newTheme}: ${error}`);
+         });
+   }
+
+   exports.onConnected = onConnected;
+   exports.handleColorChange = handleColorChange;
+</script>
+
