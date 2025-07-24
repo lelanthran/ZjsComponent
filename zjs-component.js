@@ -17,6 +17,13 @@ class ZjsComponent extends HTMLElement {
       return instance[method](...args);
    }
 
+   static sendTo(tagName, objOrSelector, method, ...args) {
+      const cls = customElements.get(tagName);
+      if (cls != null) {
+         return cls.send(objOrSelector, method, ...args);
+      }
+   }
+
    constructor() {
       super();
       this.instanceCount = ZjsComponent._instanceCount++;

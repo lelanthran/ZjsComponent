@@ -16,14 +16,26 @@
 
       <script src="../zjs-component.js"></script>
       <script>
-         const newTag = ZjsComponent.register("new-tag", "components/newtag.zjsc");
+         window["newTag"] = ZjsComponent.register("new-tag", "components/newtag.zjsc");
       </script>
    </head>
    <body>
       <h1>Hello, world!</h1>
-      <new-tag id=my-id theme-list=css/list.txt>
+      <new-tag
+         name='first-test-instance'
+         display=block
+         attr-1='value for test 1'>
       </new-tag>
-      <new-tag theme-list=css/list.txt>
+      <new-tag
+         name='second-test-instance'
+         id='id-2'
+         display=block
+         attr-1='value for test 2'>
+      </new-tag>
+      <new-tag
+         name='third-test-instance'
+         display=block
+         attr-1='value for test 3'>
       </new-tag>
    </body>
 </html>
